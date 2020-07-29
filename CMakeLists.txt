@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.11...3.17)
 
 # Project name and a few useful settings. Other commands can pick up the results
 project(ProbStructs
-        VERSION 0.1.0
+        VERSION 0.2.0
         DESCRIPTION "Library with probabilistic structures"
         LANGUAGES CXX)
 

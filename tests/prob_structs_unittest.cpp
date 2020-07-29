@@ -6,7 +6,10 @@ namespace {
 TEST(HashTest, Simple) {
     Hash h1(1);
     EXPECT_EQ(390644701,h1.hash("aaa", 3));
+    EXPECT_EQ(390644701,h1.hash(std::string("aaa")));
     EXPECT_EQ(2512199470,h1.hash("bbb", 3));
+    EXPECT_EQ(2512199470,h1.hash(std::string("bbb")));
+
 
     Hash h2(2);
     EXPECT_EQ(2275761540,h2.hash("aaa", 3));
@@ -16,10 +19,10 @@ TEST(HashTest, Simple) {
 TEST(CountMinSketchTest, Simple) {
     CountMinSketch<int> sketch(100, 4);
     sketch.inc("aaa", 3, 1);
-    sketch.inc("bbb", 3, 5);
+    sketch.inc(std::string("bbb"), 5);
     sketch.inc("aaa", 3, 2);
 
-    EXPECT_EQ(3,sketch.get("aaa", 3));
+    EXPECT_EQ(3,sketch.get(std::string("aaa")));
     EXPECT_EQ(5,sketch.get("bbb", 3));
     EXPECT_EQ(0,sketch.get("ccc", 3));
 }
@@ -384,10 +387,10 @@ TEST(ExponentialCountMinSketchTest, Simple) {
     // TS = 0
     ts = 0;
     sketch.inc("aaa", 3, ts, 1);
-    sketch.inc("bbb", 3, ts, 4);
+    sketch.inc(std::string("bbb"), ts, 4);
     sketch.inc("ccc", 3, ts, 8);
 
-    EXPECT_EQ(1,sketch.get("aaa", 3, 4, ts));
+    EXPECT_EQ(1,sketch.get(std::string("aaa"), 4, ts));
     EXPECT_EQ(4,sketch.get("bbb", 3, 4, ts));
     EXPECT_EQ(8,sketch.get("ccc", 3, 4, ts));
     EXPECT_EQ(0,sketch.get("ddd", 3, 4, ts));
@@ -396,7 +399,7 @@ TEST(ExponentialCountMinSketchTest, Simple) {
     ts = 4;
     EXPECT_EQ(0,sketch.get("aaa", 3, 2, ts));
     EXPECT_EQ(0,sketch.get("bbb", 3, 2, ts));
-    EXPECT_EQ(0,sketch.get("ccc", 3, 2, ts));
+    EXPECT_EQ(0,sketch.get(std::string("ccc"), 2, ts));
     EXPECT_EQ(0,sketch.get("ddd", 3, 2, ts));
 
     EXPECT_EQ(1,sketch.get("aaa", 3, 8, ts));

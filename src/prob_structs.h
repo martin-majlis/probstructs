@@ -27,6 +27,10 @@ public:
         this->seed = seed;
     }
 
+    uint32_t hash(const std::string &key) {
+        return hash(key.c_str(), key.length());
+    }
+
     uint32_t hash(const void * key, int len) {
         uint32_t res = 0;
         MurmurHash3_x86_32(key, len, seed, &res);
@@ -74,11 +78,19 @@ public:
         }
     }
 
+    void inc(const std::string &key, T delta) {
+        return inc(key.c_str(), key.length(), delta);
+    }
+
     void inc(const void * key, int len, T delta) {
         for(int i = 0; i < depth; i++)
         {
             counter[i][index(key, len, i)] += delta;
         }
+    }
+
+    T get(const std::string &key) {
+        return get(key.c_str(), key.length());
     }
 
     T get(const void * key, int len) {
@@ -323,6 +335,10 @@ public:
         }
     }
 
+    void inc(const std::string &key, uint tick, T delta) {
+        return inc(key.c_str(), key.length(), tick, delta);
+    }
+
     void inc(const void * key, int len, uint tick, T delta) {
         for(int i = 0; i < depth; i++)
         {
@@ -330,6 +346,9 @@ public:
         }
     }
 
+    T get(const std::string &key, uint window, uint32_t tick) {
+        return get(key.c_str(), key.length(), window, tick);
+    }
 
     T get(const void * key, int len, uint window, uint32_t tick) {
         T res = INT_MAX;
