@@ -9,6 +9,9 @@ debug-build: _debug
 debug-test: debug-build
 	_debug/tests/prob_structs_test
 
+debug-valgrind: debug-build
+	valgrind --leak-check=yes -v _debug/tests/prob_structs_test
+
 
 _release: release-configure
 

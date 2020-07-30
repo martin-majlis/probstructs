@@ -67,7 +67,7 @@ add_dependencies(${GMOCK_MAIN_LIBRARY} ${GTEST_LIBRARY})
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(prob_structs_test gtest_main.cpp prob_structs_unittest.cpp)
+add_executable(prob_structs_test gtest_main.cpp probstructs_unittest.cpp)
 
 include_directories(${source_dir}/include)
 

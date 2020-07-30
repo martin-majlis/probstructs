@@ -28,12 +28,8 @@ public:
     }
 
     uint32_t hash(const std::string &key) {
-        return hash(key.c_str(), key.length());
-    }
-
-    uint32_t hash(const void * key, int len) {
         uint32_t res = 0;
-        MurmurHash3_x86_32(key, len, seed, &res);
+        MurmurHash3_x86_32(key.c_str(), key.length(), seed, &res);
         return res;
     }
 };
@@ -44,17 +40,17 @@ const int MAX_HASH_NUM = 24;
 template<class T>
 class CountMinSketch {
 private:
-    uint32_t width;
-    int depth;
-    T *counter[MAX_HASH_NUM];
-    Hash * hash[MAX_HASH_NUM];
+    uint32_t width = 0;
+    uint8_t depth = 0;
+    T *counter[MAX_HASH_NUM] = nullptr;
+    Hash * hash[MAX_HASH_NUM] = nullptr;
 
-    uint32_t index(const void * key, int len, int l) {
-        return hash[l]->hash(key, len) % width;
+    uint32_t index(const std::string &key, int l) {
+        return hash[l]->hash(key) % width;
     }
 
 public:
-    CountMinSketch(uint32_t width, int depth) {
+    CountMinSketch(uint32_t width, uint8_t depth) {
         assert(depth < MAX_HASH_NUM);
 
         this->depth = depth;
@@ -79,25 +75,17 @@ public:
     }
 
     void inc(const std::string &key, T delta) {
-        return inc(key.c_str(), key.length(), delta);
-    }
-
-    void inc(const void * key, int len, T delta) {
         for(int i = 0; i < depth; i++)
         {
-            counter[i][index(key, len, i)] += delta;
+            counter[i][index(key, i)] += delta;
         }
     }
 
     T get(const std::string &key) {
-        return get(key.c_str(), key.length());
-    }
-
-    T get(const void * key, int len) {
         T res = INT_MAX;
         for(int i = 0; i < depth; i++)
         {
-            res = std::min(res, counter[i][index(key, len, i)]);
+            res = std::min(res, counter[i][index(key, i)]);
         }
         return res;
     }
@@ -108,12 +96,12 @@ template <class T>
 class ExponentialHistorgram {
 
 private:
-    float* counts;
-    uint size;
+    float* counts = nullptr;
+    uint32_t size = 0;
     uint32_t last_tick = 0;
     float total = 0;
 
-    uint window_size(uint bucket) {
+    uint32_t window_size(uint32_t bucket) {
         if (bucket <= 1) {
             return 1;
         } else {
@@ -122,8 +110,8 @@ private:
     }
 
 public:
-    ExponentialHistorgram() {}
-    ExponentialHistorgram(uint window) {
+    ExponentialHistorgram(): counts(nullptr), size(0) {}
+    ExponentialHistorgram(uint32_t window) {
         size = std::log2(window) + 1;
         DEBUG("Window: " << window << "; Size: " << size);
 
@@ -200,7 +188,6 @@ public:
         DEBUG("INC - TS: " << last_tick << "; T: " << tick << "; D: " << delta);
 
         uint32_t tick_diff = tick - last_tick;
-        uint max_diff = 1 << size;
 
         if (tick_diff != 0) {
             // we have to move stuff around
@@ -223,8 +210,8 @@ public:
 
                 // move it to the proper next bucket
                 // TODO: implement properly
-                uint next_b = b + 1;
-                uint wd = 0;
+                uint32_t next_b = b + 1;
+                uint32_t wd = 0;
                 while (next_b < size) {
                     wd += window_size(next_b);
                     if (wd >= tick_diff) {
@@ -255,7 +242,7 @@ public:
         DEBUG("INC - TS: " << last_tick << "; Total: " << total);
     }
 
-    T get(uint window, uint32_t tick) {
+    T get(uint32_t window, uint32_t tick) {
         DEBUG("GET - TS: " << last_tick << "; T: " << tick << "; W: " << window);
 
         DEBUG("Total - BEF: " << total);
@@ -279,7 +266,7 @@ public:
 
 
         float res = 0;
-        uint b = 0;
+        uint32_t b = 0;
         while ( b < size && window > 0) {
             uint w = window_size(b);
             if (window >= w) {
@@ -303,16 +290,16 @@ class ExponentialCountMinSketch
 {
 private:
     uint32_t width;
-    int depth;
+    uint8_t depth;
     ExponentialHistorgram<T> *counter[MAX_HASH_NUM];
     Hash * hash[MAX_HASH_NUM];
 
-    uint32_t index(const void * key, int len, int l) {
-        return hash[l]->hash(key, len) % width;
+    uint32_t index(const std::string &key, int l) {
+        return hash[l]->hash(key) % width;
     }
 
 public:
-    ExponentialCountMinSketch(uint32_t width, int depth, uint window) {
+    ExponentialCountMinSketch(uint32_t width, uint8_t depth, uint32_t window) {
         assert(depth < MAX_HASH_NUM);
 
         this->depth = depth;
@@ -335,26 +322,18 @@ public:
         }
     }
 
-    void inc(const std::string &key, uint tick, T delta) {
-        return inc(key.c_str(), key.length(), tick, delta);
-    }
-
-    void inc(const void * key, int len, uint tick, T delta) {
+    void inc(const std::string &key, uint32_t tick, T delta) {
         for(int i = 0; i < depth; i++)
         {
-            counter[i][index(key, len, i)].inc(tick, delta);
+            counter[i][index(key, i)].inc(tick, delta);
         }
     }
 
-    T get(const std::string &key, uint window, uint32_t tick) {
-        return get(key.c_str(), key.length(), window, tick);
-    }
-
-    T get(const void * key, int len, uint window, uint32_t tick) {
+    T get(const std::string &key, uint32_t window, uint32_t tick) {
         T res = INT_MAX;
         for(int i = 0; i < depth; i++)
         {
-            res = std::min(res, counter[i][index(key, len, i)].get(window, tick));
+            res = std::min(res, counter[i][index(key, i)].get(window, tick));
         }
         return res;
     }
