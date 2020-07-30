@@ -42,8 +42,8 @@ class CountMinSketch {
 private:
     uint32_t width = 0;
     uint8_t depth = 0;
-    T *counter[MAX_HASH_NUM] = nullptr;
-    Hash * hash[MAX_HASH_NUM] = nullptr;
+    T *counter[MAX_HASH_NUM] = { nullptr };
+    Hash * hash[MAX_HASH_NUM] = { nullptr };
 
     uint32_t index(const std::string &key, int l) {
         return hash[l]->hash(key) % width;
