@@ -60,7 +60,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 
         add_subdirectory(docs)
 
-        get_target_property(PROBSTRUCTS_PUBLIC_HEADER_DIR probstructs_library INTERFACE_INCLUDE_DIRECTORIES)
+        get_target_property(PROBSTRUCTS_PUBLIC_HEADER_DIR probstructs INTERFACE_INCLUDE_DIRECTORIES)
         file(GLOB_RECURSE PROBSTRUCTS_PUBLIC_HEADERS ${PROBSTRUCTS_PUBLIC_HEADER_DIR}/*.h)
 
         #This will be the main output of our command

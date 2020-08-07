@@ -13,7 +13,7 @@ debug-build: _debug
 	cmake --build _debug
 
 debug-test: debug-build
-	_debug/tests/prob_structs_test
+	_debug/tests/probstructs_test
 
 debug-valgrind: debug-build
 	valgrind --leak-check=yes -v _debug/tests/prob_structs_test
@@ -28,7 +28,7 @@ release-build: _release
 	cmake --build _release
 
 release-test: release-build
-	_release/tests/prob_structs_test
+	_release/tests/probstructs_test
 
 
 clean:
