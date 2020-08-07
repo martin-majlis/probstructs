@@ -2,6 +2,7 @@ Welcome to ProbStructs's documentation!
 =======================================
 
 `ProbStructs` library provides probabilistic structures to count elements in the stream of events.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
