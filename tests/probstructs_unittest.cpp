@@ -3,6 +3,8 @@
 #include "gtest/gtest.h"
 namespace {
 
+using namespace probstructs;
+
 TEST(HashTest, Simple) {
     Hash h1(1);
     EXPECT_EQ(390644701,h1.hash(std::string("aaa")));
@@ -61,6 +63,53 @@ TEST(ExponentialHistogramTest, Expire1Size) {
     eh.inc(2, 1);
     EXPECT_EQ(1,eh.get(1, 2));
 }
+
+TEST(ExponentialHistogramTest, DocExample) {
+    ExponentialHistorgram<int> eh(4);
+    uint ts = 0;
+
+    ts = 0;
+    EXPECT_EQ(0,eh.get(1, ts));
+    EXPECT_EQ(0,eh.get(4, ts));
+    EXPECT_EQ(0,eh.get(8, ts));
+
+    eh.inc(ts, 1);
+    EXPECT_EQ(1,eh.get(1, ts));
+    EXPECT_EQ(1,eh.get(4, ts));
+    EXPECT_EQ(1,eh.get(8, ts));
+
+    ts = 1;
+    EXPECT_EQ(0,eh.get(1, ts));
+    EXPECT_EQ(1,eh.get(4, ts));
+    EXPECT_EQ(1,eh.get(8, ts));
+
+    eh.inc(ts, 1);
+    EXPECT_EQ(1,eh.get(1, ts));
+    EXPECT_EQ(2,eh.get(4, ts));
+    EXPECT_EQ(2,eh.get(8, ts));
+
+    ts = 3;
+    EXPECT_EQ(0,eh.get(1, ts));
+    EXPECT_EQ(2,eh.get(4, ts));
+    EXPECT_EQ(2,eh.get(8, ts));
+
+    eh.inc(ts, 1);
+    EXPECT_EQ(1,eh.get(1, ts));
+    EXPECT_EQ(3,eh.get(4, ts));
+    EXPECT_EQ(3,eh.get(8, ts));
+
+    ts = 5;
+    EXPECT_EQ(0,eh.get(1, ts));
+    EXPECT_EQ(1,eh.get(4, ts));
+    EXPECT_EQ(1,eh.get(8, ts));
+
+    eh.inc(ts, 1);
+    EXPECT_EQ(1,eh.get(1, ts));
+    EXPECT_EQ(2,eh.get(4, ts));
+    EXPECT_EQ(2,eh.get(8, ts));
+
+}
+
 
 TEST(ExponentialHistogramTest, Expire8Size) {
     ExponentialHistorgram<int> eh(8);
