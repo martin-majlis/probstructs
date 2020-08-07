@@ -3,14 +3,6 @@ Welcome to ProbStructs's documentation!
 
 `ProbStructs` library provides probabilistic structures to count elements in the stream.
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
-   classes
-
-:ref:`genindex`
-
 Classes
 -------
 
@@ -70,3 +62,11 @@ Wrappers
 --------
 
 * Python - https://github.com/martin-majlis/py-probstructs/
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+   classes
+
+:ref:`genindex`

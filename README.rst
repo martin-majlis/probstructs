@@ -13,15 +13,15 @@ Full documentation is available at http://probstructs.readthedocs.io/en/latest/
 Classes
 -------
 
- * `CountMinSketch`_ - frequency table of events in a stream
- * `ExponentialHistorgram`_ - frequency of specific event in the last N elements from a stream
- * `ExponentialCountMinSketch`_ - frequency table of events in the last N elements from a stream
- * `Hash`_ - hashing function
+* `CountMinSketch`_ - frequency table of events in a stream
+* `ExponentialHistorgram`_ - frequency of specific event in the last N elements from a stream
+* `ExponentialCountMinSketch`_ - frequency table of events in the last N elements from a stream
+* `Hash`_ - hashing function
 
-.. _CountMinSketch: https://probstructs.readthedocs.io/en/latest/
-.. _ExponentialHistorgram: https://probstructs.readthedocs.io/en/latest/
-.. _ExponentialCountMinSketch: https://probstructs.readthedocs.io/en/latest/
-.. _Hash: https://probstructs.readthedocs.io/en/latest/
+.. _CountMinSketch: https://probstructs.readthedocs.io/en/latest/classes.html#countminsketch
+.. _ExponentialHistorgram: https://probstructs.readthedocs.io/en/latest/classes.html#exponentialhistorgram
+.. _ExponentialCountMinSketch: https://probstructs.readthedocs.io/en/latest/classes.html#exponentialcountminsketch
+.. _Hash: https://probstructs.readthedocs.io/en/latest/classes.html#hash
 
 Example
 -------
