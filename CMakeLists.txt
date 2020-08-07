@@ -5,8 +5,8 @@ cmake_minimum_required(VERSION 3.11...3.17)
 
 # Project name and a few useful settings. Other commands can pick up the results
 project("ProbStructs"
-        VERSION 0.3.1
-        DESCRIPTION "Library with probabilistic structures"
+        VERSION 0.4.0
+        DESCRIPTION "Library with probabilistic data structures"
         LANGUAGES CXX)
 
 # FetchContent added in CMake 3.11, downloads during the configure step

@@ -10,7 +10,6 @@
 #ifndef ECM_SKETCH_ECM_SKETCH_H
 #define ECM_SKETCH_ECM_SKETCH_H
 
-// http://users.softnet.tuc.gr/~adeli/papers/journals/VLDBJ2015.pdf
 
 #ifdef NDEBUG
 #define DEBUG(x)
@@ -43,6 +42,12 @@ public:
 
 const int MAX_HASH_NUM = 24;
 
+/**
+ * Count–min sketch (CM sketch) is a probabilistic data structure that serves as a frequency table of events in a stream of data. It uses hash functions to map events to frequencies, but unlike a hash table uses only sub-linear space, at the expense of overcounting some events due to collisions.
+ *
+ * Wiki: https://en.wikipedia.org/wiki/Count%E2%80%93min_sketch
+ * Paper: Cormode, Graham; S. Muthukrishnan (2005). "An Improved Data Stream Summary: The Count-Min Sketch and its Applications" (https://sites.google.com/site/countminsketch/cm-latin.pdf)
+ */
 template<class T>
 class CountMinSketch {
 private:
@@ -56,6 +61,9 @@ private:
     }
 
 public:
+    /**
+     * Create CM sketch with width {width} and depth {depth}.
+     */
     CountMinSketch(uint32_t width, uint8_t depth) {
         assert(depth < MAX_HASH_NUM);
 
@@ -80,6 +88,9 @@ public:
         }
     }
 
+    /**
+     * Increase counter for {key} by {delta}.
+     */
     void inc(const std::string &key, T delta) {
         for(int i = 0; i < depth; i++)
         {
@@ -87,6 +98,9 @@ public:
         }
     }
 
+    /**
+     * Get count for {key}.
+     */
     T get(const std::string &key) {
         T res = INT_MAX;
         for(int i = 0; i < depth; i++)
@@ -98,6 +112,11 @@ public:
 };
 
 // !!! TODO: https://stackoverflow.com/a/255744
+/**
+ * Exponential histogram (EH) is a probabilistic data structure that serves as a frequency counter for specific elements in the last N elements from stream..
+ *
+ * Paper: MAYUR DATAR, ARISTIDES GIONIS†, PIOTR INDYK, AND RAJEEV MOTWANI (2002). "MAINTAINING STREAM STATISTICS OVER SLIDING WINDOWS" (http://www-cs-students.stanford.edu/~datar/papers/sicomp_streams.pdf)
+ */
 template <class T>
 class ExponentialHistorgram {
 
@@ -117,6 +136,9 @@ private:
 
 public:
     ExponentialHistorgram(): counts(nullptr), size(0) {}
+    /**
+     * Create exponential histogram for last {window} elements.
+     */
     ExponentialHistorgram(uint32_t window) {
         size = std::log2(window) + 1;
         DEBUG("Window: " << window << "; Size: " << size);
@@ -190,6 +212,9 @@ public:
     }
 */
 
+    /**
+     * Increase counter by {delta} when on the position {tick} in the stream.
+     */
     void inc(uint32_t tick, T delta) {
         DEBUG("INC - TS: " << last_tick << "; T: " << tick << "; D: " << delta);
 
@@ -248,6 +273,9 @@ public:
         DEBUG("INC - TS: " << last_tick << "; Total: " << total);
     }
 
+    /**
+     * Get the counter for last {window} elements when on the position {tick} in the stream.
+     */
     T get(uint32_t window, uint32_t tick) {
         DEBUG("GET - TS: " << last_tick << "; T: " << tick << "; W: " << window);
 
@@ -291,6 +319,14 @@ public:
     }
 };
 
+/**
+ * Exponential count-min sketch (ECM-Sketch) combines CM-Sketch with EH to count number of different elements in the last N elements in the stream.
+ *
+ * Paper: Odysseas Papapetrou, Minos Garofalakis, Antonios Deligiannakis (2015). "Sketching distributed sliding-window data streams" (http://users.softnet.tuc.gr/~adeli/papers/journals/VLDBJ2015.pdf)
+ *
+ * \see CountMinSketch
+ * \see ExponentialHistorgram
+ */
 template<class T>
 class ExponentialCountMinSketch
 {
@@ -305,6 +341,9 @@ private:
     }
 
 public:
+    /**
+     * Create ECM-Sketch with width {width}, depth {depth} to count elmenets in the last {window} elements.
+     */
     ExponentialCountMinSketch(uint32_t width, uint8_t depth, uint32_t window) {
         assert(depth < MAX_HASH_NUM);
 
@@ -328,6 +367,9 @@ public:
         }
     }
 
+    /**
+     * Increase counter for {key} by {delta} when on the position {tick} in the stream.
+     */
     void inc(const std::string &key, uint32_t tick, T delta) {
         for(int i = 0; i < depth; i++)
         {
@@ -335,6 +377,9 @@ public:
         }
     }
 
+    /**
+     * Get counter for {key}for last {window} elements when on the position {tick} in the stream.
+     */
     T get(const std::string &key, uint32_t window, uint32_t tick) {
         T res = INT_MAX;
         for(int i = 0; i < depth; i++)
