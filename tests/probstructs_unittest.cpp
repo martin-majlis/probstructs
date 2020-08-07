@@ -1,5 +1,5 @@
 #include <limits.h>
-#include "../src/probstructs.h"
+#include "../probstructs/probstructs.h"
 #include "gtest/gtest.h"
 namespace {
 

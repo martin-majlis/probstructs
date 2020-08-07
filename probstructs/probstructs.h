@@ -13,11 +13,14 @@
 // http://users.softnet.tuc.gr/~adeli/papers/journals/VLDBJ2015.pdf
 
 #ifdef NDEBUG
-#define DEBUG(x) 
+#define DEBUG(x)
 #else
 #define DEBUG(x) do { std::cerr << x << std::endl; } while (0)
 #endif
 
+/**
+  Hash
+ */
 class Hash {
 private:
     uint32_t seed;
@@ -27,6 +30,9 @@ public:
         this->seed = seed;
     }
 
+    /**
+     * Foo bar
+     */
     uint32_t hash(const std::string &key) {
         uint32_t res = 0;
         MurmurHash3_x86_32(key.c_str(), key.length(), seed, &res);

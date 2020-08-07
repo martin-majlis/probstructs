@@ -72,7 +72,7 @@ add_executable(prob_structs_test gtest_main.cpp probstructs_unittest.cpp)
 include_directories(${source_dir}/include)
 
 target_link_libraries(prob_structs_test ${GTEST_LIBRARY})
-target_link_libraries(prob_structs_test prob_structs_library)
+target_link_libraries(prob_structs_test probstructs_library)
 
 
 enable_testing()

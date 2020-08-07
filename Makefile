@@ -1,3 +1,9 @@
+# You need latest cmake to make it work
+# https://apt.kitware.com/
+
+# sudo aptitude install doxygen graphviz
+# pip3 install breathe sphinx_rtd_theme
+
 _debug: debug-configure
 
 debug-configure:
