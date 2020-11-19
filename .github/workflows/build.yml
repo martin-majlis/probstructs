@@ -18,7 +18,7 @@ jobs:
         submodule_update: ON
         run_tests: ON
         unit_test_build: -Dtest=ON
-	create_package: ON
+        create_package: ON
     - uses: actions/upload-artifact@v2
       with:
         path: _release/probstructs/libprobstructs.*
