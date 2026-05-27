@@ -75,7 +75,8 @@ Example
 Benchmarks
 ----------
 
-Build and run the benchmark suite (requires CMake and a C++17 compiler):
+Build and run the benchmark suite (requires CMake 3.11+ and a C++17 compiler;
+install on macOS with ``brew install cmake``):
 
 .. code-block:: bash
 

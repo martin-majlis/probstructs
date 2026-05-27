@@ -7,6 +7,27 @@ Results are saved as JSON so you can track performance across commits.
 
 .. _Google Benchmark: https://github.com/google/benchmark
 
+Prerequisites
+-------------
+
+You need **CMake 3.11+** and a C++17-capable compiler.  The Makefile finds
+cmake automatically in ``PATH`` and the common Homebrew locations
+(``/opt/homebrew/bin``, ``/usr/local/bin``).
+
+macOS:
+
+.. code-block:: bash
+
+    brew install cmake
+
+Ubuntu/Debian:
+
+.. code-block:: bash
+
+    # Kitware's APT repository provides a current release:
+    # https://apt.kitware.com/
+    sudo apt-get install cmake
+
 Building
 --------
 
