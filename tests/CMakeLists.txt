@@ -11,6 +11,8 @@ include(ExternalProject)
 ExternalProject_Add(
         googletest
         GIT_REPOSITORY https://github.com/google/googletest.git
+        GIT_TAG        v1.14.0
+        GIT_SHALLOW    ON
         UPDATE_COMMAND ""
         INSTALL_COMMAND ""
         LOG_DOWNLOAD ON
