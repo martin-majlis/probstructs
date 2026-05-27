@@ -72,6 +72,22 @@ Example
 
 
 
+Benchmarks
+----------
+
+Build and run the benchmark suite (requires CMake and a C++17 compiler):
+
+.. code-block:: bash
+
+    make bench-build    # fetches Google Benchmark, compiles
+    make bench-run      # runs and saves results to benchmark_results/<timestamp>.json
+    make bench-compare  # compares the two most-recent result files
+
+See the `full benchmark documentation`_ for details on filtering, repeating
+runs, and comparing specific result files.
+
+.. _full benchmark documentation: https://probstructs.readthedocs.io/en/latest/benchmarks.html
+
 .. |build-status| image:: https://travis-ci.org/martin-majlis/probstructs.svg?branch=master
     :alt: build status
     :target: https://travis-ci.org/martin-majlis/probstructs

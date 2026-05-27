@@ -68,5 +68,6 @@ Wrappers
    :caption: Contents:
 
    classes
+   benchmarks
 
 :ref:`genindex`
