@@ -1,0 +1,112 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  # ── Unit Tests ──────────────────────────────────────────────────────────────
+  #
+  # Builds and runs the full test suite on Linux, macOS, and Windows.
+  # A failure here blocks the PR.
+  test:
+    name: Tests / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -S . -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=ON -B _build
+
+      - name: Build
+        run: cmake --build _build
+
+      - name: Run tests
+        run: ctest --test-dir _build --output-on-failure
+
+  # ── Benchmark Regression Check ──────────────────────────────────────────────
+  #
+  # Builds and runs the benchmark suite on a fixed Ubuntu runner to keep
+  # hardware consistent.  On PRs it compares results against the latest JSON
+  # committed to master and fails if any benchmark is >5 % slower.  On pushes
+  # to master it commits the new result file so future PRs have a fresh baseline.
+  #
+  # NOTE: GitHub Actions runners are virtualised; measurements can vary by
+  # ±2–3 % between runs.  The 5 % threshold provides headroom for that noise.
+  # Widen --threshold if the check becomes flaky on your setup.
+  benchmark:
+    name: Benchmark Regression Check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # required to push result files on master
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history so we can read master's result files
+
+      - name: Configure benchmarks
+        run: |
+          cmake -S . \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_BENCHMARKS=ON \
+            -B _bench
+
+      - name: Build benchmarks
+        run: cmake --build _bench --target probstructs_benchmark
+
+      - name: Run benchmarks
+        run: |
+          mkdir -p benchmark_results
+          TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
+          RESULT="benchmark_results/${TIMESTAMP}.json"
+          _bench/benchmarks/probstructs_benchmark \
+            --benchmark_out="${RESULT}" \
+            --benchmark_out_format=json \
+            --benchmark_color=false
+          echo "RESULT_FILE=${RESULT}" >> "$GITHUB_ENV"
+
+      - name: Find baseline on master
+        id: baseline
+        run: |
+          git fetch origin master
+          LATEST=$(git ls-tree -r origin/master --name-only -- benchmark_results/ \
+                   | grep '\.json$' | sort | tail -1)
+          if [ -n "$LATEST" ]; then
+            git show "origin/master:${LATEST}" > /tmp/baseline.json
+            echo "exists=true"  >> "$GITHUB_OUTPUT"
+            echo "Baseline: ${LATEST}"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "No baseline found on master — skipping regression check."
+          fi
+
+      - name: Check for regressions
+        if: steps.baseline.outputs.exists == 'true'
+        run: |
+          python3 scripts/bench_check_regression.py \
+            --baseline /tmp/baseline.json \
+            --current  "${{ env.RESULT_FILE }}" \
+            --threshold 5
+
+      # Runs only on direct pushes to master (not on PRs).
+      # Commits the new result file so it becomes the baseline for the next PR.
+      - name: Commit benchmark results to master
+        if: github.ref == 'refs/heads/master'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add benchmark_results/
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+          else
+            git pull --rebase origin master
+            git commit -m "ci: record benchmark results [skip ci]"
+            git push
+          fi

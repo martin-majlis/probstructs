@@ -186,6 +186,37 @@ Models API rate limiting and quota enforcement.  Reports ``throttled_pct``.
 
 All benchmarks report **items/s** throughput in addition to wall time.
 
+Continuous integration
+----------------------
+
+The ``CI`` GitHub Actions workflow (``.github/workflows/ci.yml``) runs
+automatically on every pull request and push to ``master``:
+
+* **Unit tests** — built and run on Ubuntu and macOS.  A failure blocks the PR.
+
+* **Benchmark regression check** — benchmarks are built and run on a fixed
+  Ubuntu runner for consistency.  The latest JSON file committed to ``master``
+  is used as the baseline.  If any benchmark is more than **5 %** slower the
+  workflow fails and the PR is blocked.
+
+* **Baseline update** — on pushes to ``master`` the new result file is
+  automatically committed to ``benchmark_results/`` so future PRs always
+  compare against up-to-date hardware measurements.
+
+.. note::
+
+   GitHub Actions runners are virtualised.  Timing can vary by ±2–3 % between
+   runs.  The 5 % threshold provides headroom for that noise.  If the check
+   becomes flaky on your setup, widen it by changing the ``--threshold``
+   argument in the workflow file.
+
+You can also run the regression check locally::
+
+    python3 scripts/bench_check_regression.py \
+        --baseline benchmark_results/2026-05-20_10-00-00.json \
+        --current  benchmark_results/2026-05-27_14-30-00.json \
+        --threshold 5
+
 CMake option reference
 ----------------------
 
