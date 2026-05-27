@@ -52,6 +52,8 @@ jobs:
         with:
           fetch-depth: 0   # full history so we can read master's result files
 
+      - uses: astral-sh/setup-uv@v5
+
       - name: Configure benchmarks
         run: |
           cmake -S . \
@@ -91,7 +93,7 @@ jobs:
       - name: Check for regressions
         if: steps.baseline.outputs.exists == 'true'
         run: |
-          python3 scripts/bench_check_regression.py \
+          uv run scripts/bench_check_regression.py \
             --baseline /tmp/baseline.json \
             --current  "${{ env.RESULT_FILE }}" \
             --threshold 5

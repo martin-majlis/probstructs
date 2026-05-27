@@ -39,4 +39,4 @@ else
     echo "  candidate: ${FILE2}"
 fi
 
-python3 "${COMPARE_PY}" benchmarks "${FILE1}" "${FILE2}"
+uv run --with numpy --with scipy "${COMPARE_PY}" benchmarks "${FILE1}" "${FILE2}"

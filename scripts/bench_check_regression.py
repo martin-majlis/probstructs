@@ -1,4 +1,8 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run
+# /// script
+# requires-python = ">=3.8"
+# dependencies = []
+# ///
 """Fail with exit code 1 if any benchmark regressed beyond the given threshold.
 
 Compares cpu_time from two Google Benchmark JSON result files.
