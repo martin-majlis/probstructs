@@ -18,8 +18,9 @@ jobs:
         submodule_update: ON
         run_tests: ON
         unit_test_build: -Dtest=ON
-        create_package: ON
+        create_package: OFF
     - uses: actions/upload-artifact@v4
       with:
-        path: _release/probstructs/libprobstructs.*
+        path: build/probstructs/libprobstructs.*
         name: artifact ${{ matrix.os }}
+        if-no-files-found: warn
