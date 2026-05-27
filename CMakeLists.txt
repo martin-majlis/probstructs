@@ -51,6 +51,8 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     # main CMakeLists.
     include(CTest)
 
+    option(BUILD_BENCHMARKS "Build benchmarks" OFF)
+
     # Docs only available if this is the main app
     find_package(Doxygen)
     if(Doxygen_FOUND)
@@ -83,4 +85,8 @@ endif()
 # Emergency override MODERN_CMAKE_BUILD_TESTING provided as well
 if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR MODERN_CMAKE_BUILD_TESTING) AND BUILD_TESTING)
     add_subdirectory(tests)
+endif()
+
+if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR MODERN_CMAKE_BUILD_BENCHMARKS) AND BUILD_BENCHMARKS)
+    add_subdirectory(benchmarks)
 endif()

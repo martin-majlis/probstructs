@@ -34,6 +34,7 @@
 # Build folders
 _debug/*
 _release/*
+_bench/*
 
 # Idea files:
 cmake-build-debug/

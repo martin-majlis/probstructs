@@ -32,4 +32,19 @@ release-test: release-build
 
 
 clean:
-	rm -rf _debug _release
+	rm -rf _debug _release _bench
+
+
+_bench: bench-configure
+
+bench-configure:
+	cmake -S . -DCMAKE_BUILD_TYPE=Release -DBUILD_BENCHMARKS=ON -B _bench
+
+bench-build: _bench
+	cmake --build _bench --target probstructs_benchmark
+
+bench-run: bench-build
+	./scripts/bench_run.sh _bench/benchmarks/probstructs_benchmark
+
+bench-compare:
+	./scripts/bench_compare.sh
