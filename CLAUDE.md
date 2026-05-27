@@ -39,19 +39,21 @@ On Windows, ctest needs `-C Debug` because the VS generator is multi-config.
 
 ## Benchmarks
 
-Google Benchmark suite, opt-in (`BUILD_BENCHMARKS=OFF` by default):
+Google Benchmark suite, opt-in (`BUILD_BENCHMARKS=OFF` by default).
+Requires **uv** for the comparison and regression scripts (fetches `numpy`/`scipy` automatically).
 
 ```bash
 make bench-build     # configure + compile benchmarks
 make bench-run       # run and save results to benchmark_results/local/<timestamp>.json
-make bench-compare   # compare the two most-recent local results
+make bench-compare   # compare the two most-recent local results (uses uv)
 ```
 
 Result directories:
-- `benchmark_results/local/` — gitignored; local developer runs
-- `benchmark_results/ci/` — committed; CI baseline used for regression checks
+- `benchmark_results/local/` — gitignored; local developer runs only
+- `benchmark_results/ci/` — committed to master; CI regression baseline
 
-`bench_compare.sh` and `bench_check_regression.py` are invoked via **uv** — dependencies (`numpy`, `scipy`) are fetched automatically on first use.
+`bench_compare.sh` calls Google Benchmark's `compare.py` via `uv run --with numpy --with scipy`.
+`bench_check_regression.py` has PEP 723 metadata and is invoked via `uv run`.
 
 ## CI
 

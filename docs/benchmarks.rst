@@ -22,9 +22,14 @@ The CI workflow saves to ``ci/`` automatically.
 Prerequisites
 -------------
 
-You need **CMake 3.11+** and a C++17-capable compiler.  The Makefile finds
-cmake automatically in ``PATH`` and the common Homebrew locations
-(``/opt/homebrew/bin``, ``/usr/local/bin``).
+You need **CMake 3.11+**, a C++17-capable compiler, and **uv** (used to run
+the comparison and regression scripts with their dependencies fetched
+automatically).
+
+Install uv: https://docs.astral.sh/uv/getting-started/installation/
+
+The Makefile finds cmake automatically in ``PATH`` and the common Homebrew
+locations (``/opt/homebrew/bin``, ``/usr/local/bin``).
 
 macOS:
 
@@ -62,11 +67,12 @@ Running
     make bench-run
 
 The script ``scripts/bench_run.sh`` executes the binary and writes a
-timestamped JSON file to ``benchmark_results/``::
+timestamped JSON file to ``benchmark_results/local/``::
 
-    benchmark_results/2026-05-27_14-30-00.json
+    benchmark_results/local/2026-05-27_14-30-00.json
 
-The file is committed to the repository so the run history is preserved.
+Local results are gitignored; they are only used for local comparisons.
+See *Result storage* above.
 
 You can pass extra Google Benchmark flags after the target:
 
@@ -87,15 +93,17 @@ After two or more runs:
 
 This calls ``scripts/bench_compare.sh``, which locates Google Benchmark's
 ``tools/compare.py`` inside the ``_bench`` build directory and compares the
-two most-recent result files automatically.
+two most-recent files in ``benchmark_results/local/`` automatically.
+The required Python packages (``numpy``, ``scipy``) are fetched via **uv**
+on the first run — no manual ``pip install`` needed.
 
 To compare specific files:
 
 .. code-block:: bash
 
     ./scripts/bench_compare.sh \
-        benchmark_results/2026-05-20_10-00-00.json \
-        benchmark_results/2026-05-27_14-30-00.json
+        benchmark_results/local/2026-05-20_10-00-00.json \
+        benchmark_results/local/2026-05-27_14-30-00.json
 
 The comparison output shows the relative change (``+``/``-``) for each
 benchmark, making regressions easy to spot.
@@ -204,30 +212,35 @@ Continuous integration
 The ``CI`` GitHub Actions workflow (``.github/workflows/ci.yml``) runs
 automatically on every pull request and push to ``master``:
 
-* **Unit tests** — built and run on Ubuntu and macOS.  A failure blocks the PR.
+* **Unit tests** — built and run on Ubuntu, macOS, and Windows.  A failure
+  blocks the PR.
 
 * **Benchmark regression check** — benchmarks are built and run on a fixed
-  Ubuntu runner for consistency.  The latest JSON file committed to ``master``
-  is used as the baseline.  If any benchmark is more than **5 %** slower the
+  Ubuntu runner for consistency, with ``--benchmark_repetitions=3`` so the
+  comparison uses the statistical mean rather than a single sample.  The
+  latest JSON file committed to ``master`` (in ``benchmark_results/ci/``) is
+  used as the baseline.  If any benchmark is more than **10 %** slower the
   workflow fails and the PR is blocked.
 
 * **Baseline update** — on pushes to ``master`` the new result file is
-  automatically committed to ``benchmark_results/`` so future PRs always
+  automatically committed to ``benchmark_results/ci/`` so future PRs always
   compare against up-to-date hardware measurements.
 
 .. note::
 
-   GitHub Actions runners are virtualised.  Timing can vary by ±2–3 % between
-   runs.  The 5 % threshold provides headroom for that noise.  If the check
-   becomes flaky on your setup, widen it by changing the ``--threshold``
-   argument in the workflow file.
+   GitHub Actions runners are virtualised.  Timing can vary by ±5 % between
+   runs.  Three repetitions and the 10 % threshold together provide headroom
+   for that noise.  If the check becomes flaky, widen ``--threshold`` in the
+   workflow file.
 
-You can also run the regression check locally::
+You can also run the regression check locally:
 
-    python3 scripts/bench_check_regression.py \
-        --baseline benchmark_results/2026-05-20_10-00-00.json \
-        --current  benchmark_results/2026-05-27_14-30-00.json \
-        --threshold 5
+.. code-block:: bash
+
+    uv run scripts/bench_check_regression.py \
+        --baseline benchmark_results/ci/2026-05-20_10-00-00.json \
+        --current  benchmark_results/local/2026-05-27_14-30-00.json \
+        --threshold 10
 
 CMake option reference
 ----------------------
