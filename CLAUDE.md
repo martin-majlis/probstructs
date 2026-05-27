@@ -1,0 +1,66 @@
+# ProbStructs — Claude Code guidance
+
+## Project overview
+
+C++17 header-only library of probabilistic data structures:
+- `CountMinSketch` — frequency table of events in a stream
+- `ExponentialHistorgram` — frequency of a specific event in the last N elements
+- `ExponentialCountMinSketch` — frequency table of events in the last N elements
+
+Source lives in `probstructs/probstructs.h`. Tests are in `tests/`. Benchmarks are in `benchmarks/`.
+
+## Git workflow
+
+**Always open a PR — never push directly to `master`.**
+
+## Build
+
+```bash
+make debug-build     # configure + compile (Debug)
+make debug-test      # run unit tests (Debug)
+make release-build   # configure + compile (Release)
+```
+
+CMake is auto-detected from PATH and common Homebrew locations (`/opt/homebrew/bin`, `/usr/local/bin`).
+
+## Testing
+
+Unit tests use **Google Benchmark** (fetched via FetchContent at configure time):
+
+```bash
+make debug-test      # shortcut for the above
+# or directly:
+cmake -S . -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=ON -B _build
+cmake --build _build
+ctest --test-dir _build --output-on-failure
+```
+
+On Windows, ctest needs `-C Debug` because the VS generator is multi-config.
+
+## Benchmarks
+
+Google Benchmark suite, opt-in (`BUILD_BENCHMARKS=OFF` by default):
+
+```bash
+make bench-build     # configure + compile benchmarks
+make bench-run       # run and save results to benchmark_results/local/<timestamp>.json
+make bench-compare   # compare the two most-recent local results
+```
+
+Result directories:
+- `benchmark_results/local/` — gitignored; local developer runs
+- `benchmark_results/ci/` — committed; CI baseline used for regression checks
+
+`bench_compare.sh` and `bench_check_regression.py` are invoked via **uv** — dependencies (`numpy`, `scipy`) are fetched automatically on first use.
+
+## CI
+
+Two workflows in `.github/workflows/`:
+- `ci.yml` — runs unit tests (Linux/macOS/Windows) and a benchmark regression check (Ubuntu only, fails if any benchmark is >5% slower than the committed baseline in `benchmark_results/ci/`). On pushes to `master` it commits the new benchmark result as the next baseline.
+- `build.yml` — legacy build/artifact workflow using `nicledomaS/cmake_build_action`; tests are disabled there because `ci.yml` covers all platforms.
+
+## Code conventions
+
+- C++17; use `uint32_t` (not `uint` — MSVC doesn't define `uint`)
+- Dependencies fetched via CMake FetchContent (fmtlib, googletest, googlebenchmark)
+- No external runtime dependencies

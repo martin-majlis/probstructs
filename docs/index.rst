@@ -20,7 +20,7 @@ Example
 
     ExponentialCountMinSketch<int> sketch(100, 4, 8);
 
-    uint ts = 0;
+    uint32_t ts = 0;
 
     ts = 0;
     sketch.inc("aaa", ts, 1);
