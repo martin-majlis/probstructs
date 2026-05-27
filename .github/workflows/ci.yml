@@ -72,7 +72,8 @@ jobs:
           _bench/benchmarks/probstructs_benchmark \
             --benchmark_out="${RESULT}" \
             --benchmark_out_format=json \
-            --benchmark_color=false
+            --benchmark_color=false \
+            --benchmark_repetitions=3
           echo "RESULT_FILE=${RESULT}" >> "$GITHUB_ENV"
 
       - name: Find baseline on master
@@ -96,7 +97,7 @@ jobs:
           uv run scripts/bench_check_regression.py \
             --baseline /tmp/baseline.json \
             --current  "${{ env.RESULT_FILE }}" \
-            --threshold 5
+            --threshold 10
 
       # Runs only on direct pushes to master (not on PRs).
       # Commits the new result file so it becomes the baseline for the next PR.

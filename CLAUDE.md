@@ -56,7 +56,7 @@ Result directories:
 ## CI
 
 Two workflows in `.github/workflows/`:
-- `ci.yml` — runs unit tests (Linux/macOS/Windows) and a benchmark regression check (Ubuntu only, fails if any benchmark is >5% slower than the committed baseline in `benchmark_results/ci/`). On pushes to `master` it commits the new benchmark result as the next baseline.
+- `ci.yml` — runs unit tests (Linux/macOS/Windows) and a benchmark regression check (Ubuntu only, fails if any benchmark is >10% slower than the committed baseline in `benchmark_results/ci/`). Benchmarks run with `--benchmark_repetitions=3`; the regression check uses the mean aggregate. On pushes to `master` it commits the new benchmark result as the next baseline.
 - `build.yml` — legacy build/artifact workflow using `nicledomaS/cmake_build_action`; tests are disabled there because `ci.yml` covers all platforms.
 
 ## Code conventions
