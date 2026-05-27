@@ -6,8 +6,6 @@ on:
   pull_request:
 
 jobs:
-  # ── Unit Tests ──────────────────────────────────────────────────────────────
-  #
   # Builds and runs the full test suite on Linux, macOS, and Windows.
   # A failure here blocks the PR.
   test:
@@ -16,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
       - uses: actions/checkout@v4
@@ -27,11 +25,14 @@ jobs:
       - name: Build
         run: cmake --build _build
 
-      - name: Run tests
+      - name: Run tests (Linux / macOS)
+        if: runner.os != 'Windows'
         run: ctest --test-dir _build --output-on-failure
 
-  # ── Benchmark Regression Check ──────────────────────────────────────────────
-  #
+      - name: Run tests (Windows)
+        if: runner.os == 'Windows'
+        run: ctest --test-dir _build -C Debug --output-on-failure
+
   # Builds and runs the benchmark suite on a fixed Ubuntu runner to keep
   # hardware consistent.  On PRs it compares results against the latest JSON
   # committed to master and fails if any benchmark is >5 % slower.  On pushes

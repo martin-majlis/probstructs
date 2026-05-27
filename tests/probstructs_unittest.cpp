@@ -66,7 +66,7 @@ TEST(ExponentialHistogramTest, Expire1Size) {
 
 TEST(ExponentialHistogramTest, DocExample) {
     ExponentialHistorgram<int> eh(4);
-    uint ts = 0;
+    uint32_t ts = 0;
 
     ts = 0;
     EXPECT_EQ(0,eh.get(1, ts));
@@ -113,7 +113,7 @@ TEST(ExponentialHistogramTest, DocExample) {
 
 TEST(ExponentialHistogramTest, Expire8Size) {
     ExponentialHistorgram<int> eh(8);
-    uint ts = 0;
+    uint32_t ts = 0;
 
     // TS = 0
     ts = 0;
@@ -348,7 +348,7 @@ TEST(ExponentialHistogramTest, Expire8Size) {
 
 TEST(ExponentialHistogramTest, Expire8SizeMediumJump) {
     ExponentialHistorgram<int> eh(8);
-    uint ts = 0;
+    uint32_t ts = 0;
 
     // TS = 0
     ts = 0;
@@ -388,7 +388,7 @@ TEST(ExponentialHistogramTest, Expire8SizeMediumJump) {
 
 TEST(ExponentialHistogramTest, Expire8SizeLargeJump) {
     ExponentialHistorgram<int> eh(8);
-    uint ts = 0;
+    uint32_t ts = 0;
 
     // TS = 0
     ts = 0;
@@ -429,7 +429,7 @@ TEST(ExponentialHistogramTest, Expire8SizeLargeJump) {
 TEST(ExponentialCountMinSketchTest, Simple) {
     ExponentialCountMinSketch<int> sketch(100, 4, 8);
 
-    uint ts = 0;
+    uint32_t ts = 0;
 
     // TS = 0
     ts = 0;
@@ -456,7 +456,7 @@ TEST(ExponentialCountMinSketchTest, Simple) {
 }
 
 TEST(ExponentialCountMinSketchTest, JustAllocations) {
-    for (uint i = 0; i < 100; ++i) {
+    for (uint32_t i = 0; i < 100; ++i) {
         ExponentialCountMinSketch<int> sketch(100, 4, 8);
         sketch.inc("aaa", 1000, 1);
         EXPECT_EQ(1,sketch.get("aaa", 8, 1001));
