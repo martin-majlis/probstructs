@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  # Builds and runs the full test suite on Linux and macOS.
+  # A failure here blocks the PR.
+  test:
+    name: Tests / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -S . -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=ON -B _build
+
+      - name: Build
+        run: cmake --build _build
+
+      - name: Run tests (Linux / macOS)
+        if: runner.os != 'Windows'
+        run: ctest --test-dir _build --output-on-failure
+
+      - name: Run tests (Windows)
+        if: runner.os == 'Windows'
+        run: ctest --test-dir _build -C Debug --output-on-failure
