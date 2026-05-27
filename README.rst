@@ -3,7 +3,7 @@ Probabilistic Structures
 
 `ProbStructs` as easy to use C++ library with probabilistic structures.
 
-|build-status| |docs| |github-stars-flat|
+|ci-status| |docs| |github-stars-flat|
 
 Documentation
 -------------
@@ -32,7 +32,7 @@ Example
 
     ExponentialCountMinSketch<int> sketch(100, 4, 8);
 
-    uint ts = 0;
+    uint32_t ts = 0;
 
     ts = 0;
     sketch.inc("aaa", ts, 1);
@@ -71,10 +71,30 @@ Example
     // 0
 
 
+Benchmarks
+----------
 
-.. |build-status| image:: https://travis-ci.org/martin-majlis/probstructs.svg?branch=master
-    :alt: build status
-    :target: https://travis-ci.org/martin-majlis/probstructs
+Build and run the benchmark suite (requires CMake 3.11+ and a C++17 compiler;
+install on macOS with ``brew install cmake``):
+
+.. code-block:: bash
+
+    make bench-build    # fetches Google Benchmark, compiles
+    make bench-run      # runs and saves results to benchmark_results/local/<timestamp>.json
+    make bench-compare  # compares the two most-recent local result files
+
+Results are stored in ``benchmark_results/local/`` (gitignored, per-machine)
+so local runs never pollute the repo. CI results are committed to
+``benchmark_results/ci/`` and used as the regression baseline for pull requests.
+
+See the `full benchmark documentation`_ for details on filtering, repeating
+runs, and comparing specific result files.
+
+.. _full benchmark documentation: https://probstructs.readthedocs.io/en/latest/benchmarks.html
+
+.. |ci-status| image:: https://github.com/martin-majlis/probstructs/actions/workflows/ci.yml/badge.svg
+    :alt: CI status
+    :target: https://github.com/martin-majlis/probstructs/actions/workflows/ci.yml
 
 .. |docs| image:: https://readthedocs.org/projects/probstructs/badge/?version=latest
     :target: http://probstructs.readthedocs.io/en/latest/?badge=latest
