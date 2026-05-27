@@ -91,33 +91,98 @@ benchmark, making regressions easy to spot.
 What is benchmarked
 -------------------
 
-Each data structure is benchmarked for both ``inc`` (insert) and ``get``
-(query) with three parameter sizes:
+Key domains
+~~~~~~~~~~~
+
+All benchmarks use pre-generated key pools and access sequences to avoid
+measuring string construction inside the timed loop:
 
 .. list-table::
    :header-rows: 1
-   :widths: 30 20 20 20 10
+   :widths: 20 15 65
 
-   * - Structure
-     - Small
-     - Medium
-     - Large
-     - Operations
-   * - ``CountMinSketch``
-     - width=100, depth=3
-     - width=1000, depth=5
-     - width=10000, depth=7
-     - inc, get
-   * - ``ExponentialHistorgram``
-     - window=64
-     - window=1024
-     - window=16384
-     - inc, get
-   * - ``ExponentialCountMinSketch``
-     - width=100, depth=3, window=64
-     - width=1000, depth=5, window=1024
-     - width=5000, depth=7, window=4096
-     - inc, get
+   * - Name
+     - Keys
+     - Purpose
+   * - Small
+     - 1 000
+     - High collision rate; sketch data fits in L1/L2 cache
+   * - Medium
+     - 10 000
+     - Moderate collisions; L2/L3 resident
+   * - Large
+     - 100 000
+     - Low collision rate; exercises cache pressure
+
+Access distributions
+~~~~~~~~~~~~~~~~~~~~
+
+* **Uniform** — every key equally likely (worst-case for accuracy, neutral for cache).
+* **Zipf (s=1)** — top 1 % of keys receive ~50 % of traffic.  Realistic for
+  web requests, event streams, and user activity logs.  Hot keys stay warm in
+  cache, which can reveal differences invisible under uniform load.
+
+CountMinSketch
+~~~~~~~~~~~~~~
+
+Benchmarks: ``Inc``, ``Get``, ``Mixed`` (80 % inc / 20 % get).
+
+Parameters swept: sketch width (500 – 5 000), depth (3 – 7), key domain
+(1 K – 100 K), distribution (uniform / Zipf).  The full sketch size
+(``width × depth × 4`` bytes) spans from well within L1 cache to L3-resident,
+making the parameter sweep a de-facto cache-pressure study.
+
+ExponentialHistorgram
+~~~~~~~~~~~~~~~~~~~~~
+
+Benchmarks: ``Inc``, ``Get``.
+
+The key variable is **tick_step** — how far the stream clock advances between
+calls.  This controls how much internal bucket-cascade work each call triggers:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 20 60
+
+   * - Mode
+     - tick_step
+     - Meaning
+   * - Steady
+     - 1
+     - Minimal reshuffling — hot path for continuous streams
+   * - Bursty
+     - window / 4
+     - Several buckets shift per call
+   * - Expiry
+     - window / 2
+     - Majority of stored data expires on every call
+
+Windows tested: 256, 1 024, 16 384.
+
+ExponentialCountMinSketch
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Benchmarks: ``Inc``, ``Get``, ``Mixed`` (80 % inc / 20 % get).
+
+Parameters swept: sketch width (500 – 2 000), depth (3 – 5), window
+(256 – 4 096), tick_step (steady / bursty), key domain (1 K – 100 K),
+distribution (uniform / Zipf).
+
+End-to-end scenarios
+~~~~~~~~~~~~~~~~~~~~
+
+These simulate realistic workloads rather than isolating a single operation:
+
+**FrequencyEstimation** — 90 % inserts / 10 % point queries over a 100 K Zipf
+key domain.  Models event counting (URL hits, product views).
+
+**HeavyHitterDetection** — Sliding-window frequency counting over a 10 K Zipf
+domain.  Every 10 inserts the current key is queried; keys exceeding 1 % of
+the window are flagged.  Reports ``heavy_hitters_pct`` as a counter.
+
+**RateLimiter** — Per-client request rate checking against a 60-second sliding
+window.  Each event is either counted (if under the rate limit) or dropped.
+Models API rate limiting and quota enforcement.  Reports ``throttled_pct``.
 
 All benchmarks report **items/s** throughput in addition to wall time.
 
