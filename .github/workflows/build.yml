@@ -16,7 +16,7 @@ jobs:
       uses: nicledomaS/cmake_build_action@v1.1
       with:
         submodule_update: ON
-        run_tests: ON
+        run_tests: OFF
         unit_test_build: -Dtest=ON
         create_package: OFF
     - uses: actions/upload-artifact@v4

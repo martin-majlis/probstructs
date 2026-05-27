@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
       - uses: actions/checkout@v4
@@ -25,5 +25,10 @@ jobs:
       - name: Build
         run: cmake --build _build
 
-      - name: Run tests
+      - name: Run tests (Linux / macOS)
+        if: runner.os != 'Windows'
         run: ctest --test-dir _build --output-on-failure
+
+      - name: Run tests (Windows)
+        if: runner.os == 'Windows'
+        run: ctest --test-dir _build -C Debug --output-on-failure
