@@ -2,7 +2,7 @@
 set -euo pipefail
 
 BENCH_BIN="${1:-_bench/benchmarks/probstructs_benchmark}"
-RESULTS_DIR="benchmark_results"
+RESULTS_DIR="benchmark_results/local"
 
 mkdir -p "${RESULTS_DIR}"
 

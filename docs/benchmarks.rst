@@ -5,6 +5,18 @@ ProbStructs ships a `Google Benchmark`_ suite that measures ``inc`` and ``get``
 performance for all three data structures across a range of parameter sizes.
 Results are saved as JSON so you can track performance across commits.
 
+Result storage
+--------------
+
+Results are kept in two separate directories so local and CI runs never mix:
+
+* ``benchmark_results/local/`` — your local runs; **gitignored** (never committed)
+* ``benchmark_results/ci/`` — CI runs committed to ``master``; used as the
+  regression baseline for pull requests
+
+``make bench-run`` and ``make bench-compare`` always target ``local/``.
+The CI workflow saves to ``ci/`` automatically.
+
 .. _Google Benchmark: https://github.com/google/benchmark
 
 Prerequisites

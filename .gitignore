@@ -36,6 +36,9 @@ _debug/*
 _release/*
 _bench/*
 
+# Local benchmark results (CI results in benchmark_results/ci/ are committed)
+benchmark_results/local/
+
 # Idea files:
 cmake-build-debug/
 .idea/

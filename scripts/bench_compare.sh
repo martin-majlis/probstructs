@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-RESULTS_DIR="benchmark_results"
+RESULTS_DIR="benchmark_results/local"
 COMPARE_PY_SEARCH_PATHS=(
     "_bench/_deps/googlebenchmark-src/tools/compare.py"
     "_debug/_deps/googlebenchmark-src/tools/compare.py"
