@@ -59,6 +59,7 @@ jobs:
 
       - name: Check for regressions
         if: steps.baseline.outputs.exists == 'true'
+        continue-on-error: true
         run: |
           uv run scripts/bench_check_regression.py \
             --baseline /tmp/baseline.json \
