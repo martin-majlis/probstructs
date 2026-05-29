@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0   # full history so we can read master's result files
-          token: ${{ secrets.BENCHMARK_TOKEN }}
+          token: ${{ secrets.BENCHMARK_TOKEN || github.token }}
 
       - uses: astral-sh/setup-uv@v5
 
