@@ -219,8 +219,15 @@ automatically on every pull request and push to ``master``:
   Ubuntu runner for consistency, with ``--benchmark_repetitions=3`` so the
   comparison uses the statistical mean rather than a single sample.  The
   latest JSON file committed to ``master`` (in ``benchmark_results/ci/``) is
-  used as the baseline.  If any benchmark is more than **10 %** slower the
-  workflow fails and the PR is blocked.
+  used as the baseline.  Two independent rules are evaluated:
+
+  * **Per-benchmark rule** — fails if **2 or more** benchmarks are each more
+    than **10 %** slower.  A single noisy outlier does not trigger this rule.
+  * **Geomean rule** — fails if the geometric mean of all cpu_time ratios
+    regresses by more than **5 %**.  Catches broad slowdowns spread across
+    many benchmarks that each stay under the per-benchmark threshold.
+
+  Either rule failing blocks the PR.
 
 * **Baseline update** — on pushes to ``master`` the new result file is
   automatically committed to ``benchmark_results/ci/`` so future PRs always
@@ -229,9 +236,10 @@ automatically on every pull request and push to ``master``:
 .. note::
 
    GitHub Actions runners are virtualised.  Timing can vary by ±5 % between
-   runs.  Three repetitions and the 10 % threshold together provide headroom
-   for that noise.  If the check becomes flaky, widen ``--threshold`` in the
-   workflow file.
+   runs.  Three repetitions, the 10 % per-benchmark threshold, and the
+   minimum-regressions=2 rule together filter out single-benchmark noise.
+   If the check becomes flaky, increase ``--min-regressions`` or widen
+   ``--threshold`` in the workflow file.
 
 You can also run the regression check locally:
 
@@ -240,7 +248,7 @@ You can also run the regression check locally:
     uv run scripts/bench_check_regression.py \
         --baseline benchmark_results/ci/2026-05-20_10-00-00.json \
         --current  benchmark_results/local/2026-05-27_14-30-00.json \
-        --threshold 10
+        --threshold 10 --min-regressions 2 --geomean-threshold 5
 
 CMake option reference
 ----------------------

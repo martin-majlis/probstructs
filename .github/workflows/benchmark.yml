@@ -63,7 +63,9 @@ jobs:
           uv run scripts/bench_check_regression.py \
             --baseline /tmp/baseline.json \
             --current  "${{ env.RESULT_FILE }}" \
-            --threshold 10
+            --threshold 10 \
+            --min-regressions 2 \
+            --geomean-threshold 5
 
       - name: Commit results to master
         if: github.ref == 'refs/heads/master'
