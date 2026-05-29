@@ -40,8 +40,17 @@ release-test: release-build
 	_release/tests/probstructs_test
 
 
+_docs: docs-configure
+
+docs-configure:
+	$(CMAKE) -S . -DCMAKE_BUILD_TYPE=Release -B _docs
+
+docs-build: _docs
+	$(CMAKE) --build _docs --target Sphinx
+
+
 clean:
-	rm -rf _debug _release _bench
+	rm -rf _debug _release _bench _docs
 
 
 _bench: bench-configure

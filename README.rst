@@ -71,6 +71,35 @@ Example
     // 0
 
 
+Building the docs
+-----------------
+
+Prerequisites: **CMake 3.11+**, **Doxygen**, **Graphviz**, and the Python
+packages listed in ``docs/requirements.txt`` (``breathe`` and
+``sphinx-rtd-theme``).
+
+macOS:
+
+.. code-block:: bash
+
+    brew install cmake doxygen graphviz
+    pip install -r docs/requirements.txt
+
+Ubuntu/Debian:
+
+.. code-block:: bash
+
+    sudo apt-get install cmake doxygen graphviz
+    pip install -r docs/requirements.txt
+
+Then build:
+
+.. code-block:: bash
+
+    make docs-build
+
+The generated HTML lands in ``_docs/docs/sphinx/``.
+
 Benchmarks
 ----------
 

@@ -37,6 +37,18 @@ ctest --test-dir _build --output-on-failure
 
 On Windows, ctest needs `-C Debug` because the VS generator is multi-config.
 
+## Docs
+
+Requires **Doxygen**, **Graphviz**, and the Python packages in `docs/requirements.txt` (`breathe`, `sphinx-rtd-theme`).
+
+```bash
+# macOS: brew install doxygen graphviz && pip install -r docs/requirements.txt
+# Linux: apt-get install doxygen graphviz && pip install -r docs/requirements.txt
+make docs-build   # output: _docs/docs/sphinx/
+```
+
+Docs are also published automatically at https://probstructs.readthedocs.io via ReadTheDocs.
+
 ## Benchmarks
 
 Google Benchmark suite, opt-in (`BUILD_BENCHMARKS=OFF` by default).
