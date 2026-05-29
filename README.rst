@@ -3,7 +3,7 @@ Probabilistic Structures
 
 `ProbStructs` as easy to use C++ library with probabilistic structures.
 
-|ci-status| |docs| |github-stars-flat|
+|build-status| |test-status| |benchmark-status| |docs| |github-stars-flat|
 
 Documentation
 -------------
@@ -92,9 +92,17 @@ runs, and comparing specific result files.
 
 .. _full benchmark documentation: https://probstructs.readthedocs.io/en/latest/benchmarks.html
 
-.. |ci-status| image:: https://github.com/martin-majlis/probstructs/actions/workflows/ci.yml/badge.svg
-    :alt: CI status
-    :target: https://github.com/martin-majlis/probstructs/actions/workflows/ci.yml
+.. |build-status| image:: https://github.com/martin-majlis/probstructs/actions/workflows/build.yml/badge.svg
+    :alt: Build status
+    :target: https://github.com/martin-majlis/probstructs/actions/workflows/build.yml
+
+.. |test-status| image:: https://github.com/martin-majlis/probstructs/actions/workflows/test.yml/badge.svg
+    :alt: Test status
+    :target: https://github.com/martin-majlis/probstructs/actions/workflows/test.yml
+
+.. |benchmark-status| image:: https://github.com/martin-majlis/probstructs/actions/workflows/benchmark.yml/badge.svg
+    :alt: Benchmark status
+    :target: https://github.com/martin-majlis/probstructs/actions/workflows/benchmark.yml
 
 .. |docs| image:: https://readthedocs.org/projects/probstructs/badge/?version=latest
     :target: http://probstructs.readthedocs.io/en/latest/?badge=latest
