@@ -18,7 +18,7 @@ jobs:
           fetch-depth: 0   # full history so we can read master's result files
           token: ${{ secrets.BENCHMARK_TOKEN || github.token }}
 
-      - uses: astral-sh/setup-uv@v5
+      - uses: astral-sh/setup-uv@v7
 
       - name: Configure
         run: |
