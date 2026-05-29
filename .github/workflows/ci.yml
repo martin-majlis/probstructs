@@ -107,11 +107,11 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin master
           git add benchmark_results/ci/
           if git diff --cached --quiet; then
             echo "Nothing to commit."
           else
-            git pull --rebase origin master
             git commit -m "ci: record benchmark results [skip actions]"
             git push
           fi
