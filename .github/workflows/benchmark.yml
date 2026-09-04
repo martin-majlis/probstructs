@@ -13,7 +13,7 @@ jobs:
       contents: write   # required to push result files on master
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0   # full history so we can read master's result files
           token: ${{ secrets.BENCHMARK_TOKEN || github.token }}
